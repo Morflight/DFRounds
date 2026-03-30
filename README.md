@@ -2,6 +2,8 @@
 
 A fullscreen broadcast overlay for displaying tournament round progression. Designed for 1920×1080 capture in OBS or any similar tool.
 
+![Preview](images/preview.png)
+
 ---
 
 ## Features
