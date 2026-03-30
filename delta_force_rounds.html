@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delta Force Rounds</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+// ──────────────────────────────────────────────
+// Language strings — edit these to update translations
+// Add a new block (e.g. it: { ... }) to register a new language
+// ──────────────────────────────────────────────
+const LANGS = {
+  en: {
+    lang_name:          "English",
+    title:              "Tournament Progression",
+    subtitle:           "Bi-weekly scrims.cc",
+    picker_round:       "Round",
+    round_label:        "Round",
+    settings_language:  "Language",
+    settings_reset_r3:  "Reset R3 pick",
+    hint_r3_before:     "3 = before pick (split preview)",
+    hint_r3_prison:     "3.1 = Tidal Prison",
+    hint_r3_brakkesh:   "3.2 = Brakkesh",
+    hint_r7_before:     "7 = before pick (triple preview)",
+    hint_r7_prison:     "7.1 = Tidal Prison",
+    hint_r7_brakkesh:   "7.2 = Brakkesh",
+    hint_r7_space:      "7.3 = Space City",
+    map_prison:         "Tidal Prison",
+    map_brakkesh:       "Brakkesh",
+    map_space:          "Space City",
+    map_dam:            "Zero Dam",
+    map_tbd:            "To be decided",
+    mode_airdrop:       "Airdrop",
+    mode_mandelbrick:   "Mandlebrick active",
+    footer_note:        "Before rounds 3 and 7, the team ranked 6th chooses the map",
+    footer_brand:       "Bi-weekly scrims.cc tournament",
+  },
+  fr: {
+    lang_name:          "Français",
+    title:              "Progression du Tournoi",
+    subtitle:           "Bi-hebdomadaire scrims.cc",
+    picker_round:       "Manche",
+    round_label:        "Manche",
+    settings_language:  "Langue",
+    settings_reset_r3:  "Réinitialiser le choix R3",
+    hint_r3_before:     "3 = avant le choix (aperçu partagé)",
+    hint_r3_prison:     "3.1 = Prison des marées",
+    hint_r3_brakkesh:   "3.2 = Brakkesh",
+    hint_r7_before:     "7 = avant le choix (triple aperçu)",
+    hint_r7_prison:     "7.1 = Prison des marées",
+    hint_r7_brakkesh:   "7.2 = Brakkesh",
+    hint_r7_space:      "7.3 = Cité Spatiale",
+    map_prison:         "Prison des marées",
+    map_brakkesh:       "Brakkesh",
+    map_space:          "Cité Spatiale",
+    map_dam:            "Barrage Zéro",
+    map_tbd:            "À déterminer",
+    mode_airdrop:       "Largage aérien",
+    mode_mandelbrick:   "Mandlebrick actif",
+    footer_note:        "Avant les manches 3 et 7, l'équipe classée 6e choisit la carte",
+    footer_brand:       "Tournoi bi-hebdomadaire scrims.cc",
+  },
+  ru: {
+    lang_name:          "Русский",
+    title:              "Прогресс турнира",
+    subtitle:           "Двухнедельный scrims.cc",
+    picker_round:       "Раунд",
+    round_label:        "Раунд",
+    settings_language:  "Язык",
+    settings_reset_r3:  "Сброс выбора R3",
+    hint_r3_before:     "3 = до выбора (предпросмотр)",
+    hint_r3_prison:     "3.1 = Приливная тюрьма",
+    hint_r3_brakkesh:   "3.2 = Брakkesh",
+    hint_r7_before:     "7 = до выбора (тройной предпросмотр)",
+    hint_r7_prison:     "7.1 = Приливная тюрьма",
+    hint_r7_brakkesh:   "7.2 = Брakkesh",
+    hint_r7_space:      "7.3 = Космический город",
+    map_prison:         "Приливная тюрьма",
+    map_brakkesh:       "Брakkesh",
+    map_space:          "Космический город",
+    map_dam:            "Нулевая плотина",
+    map_tbd:            "Не определено",
+    mode_airdrop:       "Авиадесант",
+    mode_mandelbrick:   "Mandlebrick активен",
+    footer_note:        "Перед раундами 3 и 7 команда на 6-м месте выбирает карту",
+    footer_brand:       "Двухнедельный турнир scrims.cc",
+  },
+};
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --teal: #00e5a0;
+    --teal-bright: #00ffa8;
+    --dark-bg: #0b1610;
+    --card-bg: #111e16;
+    --card-border: #1a2e22;
+    --grey-text: #5a6e62;
+    --white: #eaf2ec;
+  }
+  body {
+    background: #080e0a;
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--white);
+  }
+
+  /* ── Top control row (settings + picker side by side) ── */
+  .top-controls {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0;
+    margin: 20px auto 0;
+    width: fit-content;
+  }
+
+  /* ── Settings panel ── */
+  .settings-bar {
+    background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,229,160,0.25);
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+  }
+  .settings-section {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .settings-section label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--teal);
+    white-space: nowrap;
+  }
+  .settings-section select {
+    background: #141e18; border: 1px solid #2a3e30;
+    color: var(--white); font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 700; padding: 4px 10px;
+    border-radius: 5px; cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .settings-section select:hover { border-color: var(--teal); }
+
+  .reset-btn {
+    background: transparent;
+    border: 1px solid rgba(0,229,160,0.4);
+    color: var(--teal);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 5px;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .reset-btn:hover { background: rgba(0,229,160,0.1); border-color: var(--teal); }
+  .reset-btn:disabled {
+    opacity: 0.3; cursor: default;
+    border-color: #2a3e30; color: var(--grey-text);
+  }
+
+  /* ── Picker ── */
+  .picker {
+    width: fit-content;
+    z-index: 999;
+    background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+    padding: 12px 22px; border-radius: 0 12px 12px 0;
+    border: 1px solid rgba(0,229,160,0.25);
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
+  }
+  .picker-row { display: flex; gap: 5px; align-items: center; }
+  .picker-row span {
+    font-size: 12px; color: var(--teal); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.5px; margin-right: 6px;
+  }
+  .picker button {
+    min-width: 38px; height: 32px; padding: 0 8px;
+    border: 1px solid #2a3e30; background: #141e18;
+    color: var(--white); font-family: 'Rajdhani', sans-serif;
+    font-weight: 700; font-size: 13px; border-radius: 5px;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .picker button:hover { border-color: var(--teal); background: #1a2e22; }
+  .picker button.active { background: var(--teal); color: #0b1610; border-color: var(--teal); }
+  .picker button.alt { border-color: #3a5040; font-size: 11px; }
+  /* Alt buttons hidden once R3 map is locked */
+  .picker button.alt.r3-btn.locked { display: none; }
+  .picker .hint {
+    font-size: 10px; color: var(--grey-text); text-align: center; line-height: 1.3;
+  }
+
+  /* ── Canvas ── */
+  .canvas {
+    width: 1920px; height: 1080px;
+    margin: 8px auto 0;
+    position: relative; overflow: hidden;
+    background: linear-gradient(140deg, #0d1e14 0%, #0a160e 35%, #0e1a12 100%);
+  }
+
+  /* BG deco */
+  .bg-shard { position: absolute; pointer-events: none; }
+  .bg-shard.s1 {
+    top: -120px; right: -60px; width: 800px; height: 600px;
+    background: linear-gradient(155deg, rgba(0,229,160,0.07) 0%, transparent 55%);
+    transform: rotate(-12deg);
+  }
+  .bg-shard.s2 {
+    bottom: -80px; left: -40px; width: 600px; height: 400px;
+    background: linear-gradient(30deg, rgba(0,229,160,0.04) 0%, transparent 50%);
+    transform: rotate(8deg);
+  }
+  .bg-shard.s3 {
+    top: 250px; left: 350px; width: 500px; height: 300px;
+    background: linear-gradient(200deg, rgba(0,229,160,0.03) 0%, transparent 40%);
+    transform: rotate(-25deg);
+  }
+  .accent-line { position: absolute; pointer-events: none; opacity: 0.1; }
+  .accent-line.l1 {
+    width: 2px; height: 500px; top: 0; left: 120px;
+    background: linear-gradient(to bottom, var(--teal), transparent);
+    transform: rotate(15deg); transform-origin: top left;
+  }
+  .accent-line.l2 {
+    width: 1px; height: 400px; bottom: 0; right: 200px;
+    background: linear-gradient(to top, var(--teal), transparent);
+    transform: rotate(-20deg); transform-origin: bottom right;
+  }
+
+  /* ── Header ── */
+  .header {
+    position: absolute; top: 50px; left: 80px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .v-logo { width: 55px; height: 65px; }
+  .v-logo svg { width: 100%; height: 100%; }
+  .header h1 {
+    font-family: 'Oswald', sans-serif; font-size: 62px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    text-shadow: 0 0 40px rgba(0,229,160,0.12);
+  }
+  .top-logos {
+    position: absolute; top: 50px; right: 80px;
+    display: flex; gap: 16px; align-items: center;
+  }
+  .logo-box {
+    background: rgba(0,229,160,0.06); border: 1px solid rgba(0,229,160,0.15);
+    border-radius: 5px; padding: 8px 18px;
+    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600;
+    color: var(--teal); letter-spacing: 1.5px; text-transform: uppercase;
+  }
+
+  /* ── Rounds ── */
+  .rounds {
+    position: absolute; top: 195px; left: 55px; right: 55px;
+    height: 580px; display: flex; gap: 5px;
+  }
+
+  /* ── Card ── */
+  .card {
+    flex: 1; display: flex; flex-direction: column;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    position: relative; overflow: hidden;
+    transition: filter 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .card.past { filter: saturate(0.12) brightness(0.5); }
+  .card.current {
+    border-color: var(--teal);
+    box-shadow: 0 0 30px rgba(0,229,160,0.1), inset 0 0 25px rgba(0,229,160,0.02);
+  }
+
+  .bar { height: 5px; width: 100%; background: transparent; transition: background 0.3s; }
+  .card.current .bar {
+    background: linear-gradient(90deg, var(--teal), var(--teal-bright));
+    box-shadow: 0 2px 12px rgba(0,229,160,0.4);
+  }
+  .card.past .bar {
+    background: linear-gradient(90deg, #c8a84e, #e8c85e); opacity: 0.45;
+  }
+
+  .card-head {
+    padding: 14px 14px 8px; text-align: center;
+    min-height: 90px; /* accommodates 2-line map names without shifting map area */
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .rlabel {
+    font-size: 13px; font-weight: 600; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--grey-text); margin-bottom: 1px;
+  }
+  .card.current .rlabel { color: rgba(0,229,160,0.65); }
+  .mname {
+    font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700;
+    letter-spacing: 0.5px; color: var(--white);
+    line-height: 1.2;
+  }
+  .card.current .mname {
+    color: var(--teal); text-shadow: 0 0 18px rgba(0,229,160,0.25);
+  }
+
+  /* Map area */
+  .map-area {
+    flex: 1; position: relative; margin: 0 7px; overflow: hidden;
+  }
+  .map-clip {
+    width: 100%; height: 100%;
+    position: absolute; top: 0; left: 0;
+  }
+  .map-bg { width: 100%; height: 100%; position: relative; }
+
+  /* ── Map colours ── */
+  .map-dam     { background: url('images/barrage.png') center center / cover no-repeat; }
+  .map-brakkesh{ background: url('images/brakkesh.webp') 70% center / cover no-repeat; }
+  .map-prison  { background: url('images/Prison.webp') center center / cover no-repeat; }
+  .map-space   { background: url('images/cite.png') center 60% / cover no-repeat; }
+  .map-tbd     { background: linear-gradient(150deg, #1a2420, #0e1a14 50%, #1a2a20); }
+  .map-tbd::after {
+    content: '?'; position: absolute;
+    top: 42%; left: 50%; transform: translate(-50%, -50%);
+    font-family: 'Oswald', sans-serif;
+    font-size: 72px; color: rgba(0,229,160,0.07); font-weight: 700;
+  }
+
+  /* ── Split preview for multi-choice rounds (top/bottom) ── */
+  .map-split { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+  .map-split .split-half { position: absolute; left: 0; width: 100%; overflow: hidden; }
+  .map-split .split-half:first-child {
+    top: 0; height: 49%;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 92%);
+  }
+  .map-split .split-half:last-child {
+    bottom: 0; height: 49%;
+    clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 100%);
+  }
+  .map-split .split-half .map-bg { width: 100%; height: 100%; }
+
+  /* Triple split for R7 */
+  .map-triple { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+  .map-triple .split-third { position: absolute; left: 0; width: 100%; overflow: hidden; }
+  .map-triple .split-third:first-child {
+    top: 0; height: 32%;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 90%);
+  }
+  .map-triple .split-third:nth-child(2) {
+    top: 34%; height: 32%;
+    clip-path: polygon(0 10%, 100% 0, 100% 100%, 0 90%);
+  }
+  .map-triple .split-third:last-child {
+    bottom: 0; height: 32%;
+    clip-path: polygon(0 10%, 100% 0, 100% 100%, 0 100%);
+  }
+  .map-triple .split-third .map-bg { width: 100%; height: 100%; }
+
+  .diag-overlay { display: none; }
+
+  /* Mode */
+  .mode {
+    padding: 14px 10px 18px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+  }
+  .mode svg { width: 34px; height: 34px; opacity: 0.7; }
+  .mode-name {
+    font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* Footer */
+  .footer-note {
+    position: absolute; bottom: 38px; left: 0; right: 0;
+    text-align: center; font-size: 19px; font-weight: 500;
+    color: rgba(255,255,255,0.5);
+  }
+  .footer-brand {
+    position: absolute; bottom: 14px; right: 80px;
+    font-size: 15px; font-weight: 600;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 2.5px; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Top controls: settings left, picker right ── -->
+<div class="top-controls">
+
+  <div class="settings-bar">
+    <div class="settings-section">
+      <label id="lbl-lang" data-i18n="settings_language">Language</label>
+      <select id="langSelect" onchange="setLang(this.value)"></select>
+    </div>
+    <div class="settings-section">
+      <button class="reset-btn" id="resetR3Btn" onclick="resetR3()" disabled
+        data-i18n="settings_reset_r3">Reset R3 pick</button>
+    </div>
+  </div>
+
+  <!-- ── Picker ── -->
+  <div class="picker">
+  <div class="picker-row">
+    <span id="lbl-round" data-i18n="picker_round">Round</span>
+    <button data-sel="1"   onclick="setRound('1')" class="active">1</button>
+    <button data-sel="2"   onclick="setRound('2')">2</button>
+    <button data-sel="3"   onclick="setRound('3')">3</button>
+    <button data-sel="3.1" onclick="setRound('3.1')" class="alt r3-btn">3.1</button>
+    <button data-sel="3.2" onclick="setRound('3.2')" class="alt r3-btn">3.2</button>
+    <button data-sel="4"   onclick="setRound('4')">4</button>
+    <button data-sel="5"   onclick="setRound('5')">5</button>
+    <button data-sel="6"   onclick="setRound('6')">6</button>
+    <button data-sel="7"   onclick="setRound('7')">7</button>
+    <button data-sel="7.1" onclick="setRound('7.1')" class="alt">7.1</button>
+    <button data-sel="7.2" onclick="setRound('7.2')" class="alt">7.2</button>
+    <button data-sel="7.3" onclick="setRound('7.3')" class="alt">7.3</button>
+  </div>
+    <div class="hint" id="pickerHint"></div>
+  </div><!-- /.picker -->
+
+</div><!-- /.top-controls -->
+
+<!-- ── Canvas ── -->
+<div style="display:flex;justify-content:center;padding:20px 0 40px;">
+<div class="canvas" id="canvas">
+
+  <div class="bg-shard s1"></div>
+  <div class="bg-shard s2"></div>
+  <div class="bg-shard s3"></div>
+  <div class="accent-line l1"></div>
+  <div class="accent-line l2"></div>
+
+  <div class="header">
+    <div class="v-logo">
+      <svg viewBox="0 0 55 65" xmlns="http://www.w3.org/2000/svg">
+        <path d="M27.5 0 L54 23 L27.5 65 L1 23 Z" fill="#fff" opacity=".92"/>
+        <path d="M27.5 9 L45 25 L27.5 55 L10 25 Z" fill="#0b1610"/>
+        <path d="M27.5 18 L37 27 L27.5 44 L18 27 Z" fill="#fff" opacity=".45"/>
+      </svg>
+    </div>
+    <h1 id="main-title" data-i18n="title">Tournament Progression</h1>
+  </div>
+
+  <div class="top-logos">
+    <div class="logo-box">Scrims.cc</div>
+    <div class="logo-box" style="background:rgba(0,229,160,0.1)" id="subtitle-box" data-i18n="subtitle">Bi-weekly</div>
+  </div>
+
+  <div class="rounds" id="rounds">
+
+    <!-- R1 -->
+    <div class="card" data-r="1">
+      <div class="bar"></div>
+      <div class="card-head">
+        <div class="rlabel"><span data-i18n="round_label">Round</span> 1</div>
+        <div class="mname" data-i18n="map_dam">Zero Dam</div>
+      </div>
+      <div class="map-area">
+        <div class="map-clip"><div class="map-bg map-dam"></div></div>
+        <div class="diag-overlay"></div>
+      </div>
+      <div class="mode">
+        <img src="images/airdrop.png" style="height:50px;width:auto;">
+        <div class="mode-name" data-i18n="mode_airdrop">Airdrop</div>
+      </div>
+    </div>
+
+    <!-- R2 -->
+    <div class="card" data-r="2">
+      <div class="bar"></div>
+      <div class="card-head">
+        <div class="rlabel"><span data-i18n="round_label">Round</span> 2</div>
+        <div class="mname" data-i18n="map_brakkesh">Brakkesh</div>
+      </div>
+      <div class="map-area">
+        <div class="map-clip"><div class="map-bg map-brakkesh"></div></div>
+        <div class="diag-overlay"></div>
+      </div>
+      <div class="mode">
+        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
+      </div>
+    </div>
+
+    <!-- R3 (dynamic) -->
+    <div class="card" data-r="3" id="card3">
+      <div class="bar"></div>
+      <div class="card-head">
+        <div class="rlabel"><span data-i18n="round_label">Round</span> 3</div>
+        <div class="mname" id="mname3">To be decided</div>
+      </div>
+      <div class="map-area" id="maparea3">
+        <div class="map-clip">
+          <div class="map-split">
+            <div class="split-half"><div class="map-bg map-prison"></div></div>
+            <div class="split-half"><div class="map-bg map-brakkesh"></div></div>
+          </div>
+        </div>
+        <div class="diag-overlay"></div>
+      </div>
+      <div class="mode">
+        <img src="images/airdrop.png" style="height:50px;width:auto;">
+        <div class="mode-name" data-i18n="mode_airdrop">Airdrop</div>
+      </div>
+    </div>
+
+    <!-- R4 -->
+    <div class="card" data-r="4">
+      <div class="bar"></div>
+      <div class="card-head">
+        <div class="rlabel"><span data-i18n="round_label">Round</span> 4</div>
+        <div class="mname" data-i18n="map_space">Space City</div>
+      </div>
+      <div class="map-area">
+        <div class="map-clip"><div class="map-bg map-space"></div></div>
+        <div class="diag-overlay"></div>
+      </div>
+      <div class="mode">
+        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
+      </div>
+    </div>
+
+    <!-- R5 -->
+    <div class="card" data-r="5">
+      <div class="bar"></div>
+      <div class="card-head">
+        <div class="rlabel"><span data-i18n="round_label">Round</span> 5</div>
+        <div class="mname" data-i18n="map_space">Space City</div>
+      </div>
+      <div class="map-area">
+        <div class="map-clip"><div class="map-bg map-space"></div></div>
+        <div class="diag-overlay"></div>
+      </div>
+      <div class="mode">
+        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
+      </div>
+    </div>
+
+    <!-- R6 -->
+    <div class="card" data-r="6">
+      <div class="bar"></div>
+      <div class="card-head">
+        <div class="rlabel"><span data-i18n="round_label">Round</span> 6</div>
+        <div class="mname" data-i18n="map_space">Space City</div>
+      </div>
+      <div class="map-area">
+        <div class="map-clip"><div class="map-bg map-space"></div></div>
+        <div class="diag-overlay"></div>
+      </div>
+      <div class="mode">
+        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
+      </div>
+    </div>
+
+    <!-- R7 (dynamic) -->
+    <div class="card" data-r="7" id="card7">
+      <div class="bar"></div>
+      <div class="card-head">
+        <div class="rlabel"><span data-i18n="round_label">Round</span> 7</div>
+        <div class="mname" id="mname7">To be decided</div>
+      </div>
+      <div class="map-area" id="maparea7">
+        <div class="map-clip">
+          <div class="map-triple">
+            <div class="split-third"><div class="map-bg map-prison"></div></div>
+            <div class="split-third"><div class="map-bg map-brakkesh"></div></div>
+            <div class="split-third"><div class="map-bg map-space"></div></div>
+          </div>
+        </div>
+        <div class="diag-overlay"></div>
+      </div>
+      <div class="mode">
+        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note" id="footer-note" data-i18n="footer_note">
+    Before rounds 3 and 7, the team ranked 6th chooses the map
+  </div>
+  <div class="footer-brand" id="footer-brand" data-i18n="footer_brand">
+    Bi-weekly scrims.cc tournament
+  </div>
+
+</div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// i18n
+// ──────────────────────────────────────────────
+let currentLang = 'en';
+
+function t(key) {
+  return (LANGS[currentLang]?.[key]) || LANGS.en[key] || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+
+  // Update all static data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+
+  // Update picker hint
+  document.getElementById('pickerHint').innerHTML =
+    `${t('hint_r3_before')} · ${t('hint_r3_prison')} · ${t('hint_r3_brakkesh')}<br>` +
+    `${t('hint_r7_before')} · ${t('hint_r7_prison')} · ${t('hint_r7_brakkesh')} · ${t('hint_r7_space')}`;
+
+  // Re-render dynamic round names with new language
+  refreshDynamicNames();
+}
+
+// ──────────────────────────────────────────────
+// Map templates
+// ──────────────────────────────────────────────
+const MAP_SINGLE = {
+  prison:   '<div class="map-clip"><div class="map-bg map-prison"></div></div><div class="diag-overlay"></div>',
+  brakkesh: '<div class="map-clip"><div class="map-bg map-brakkesh"></div></div><div class="diag-overlay"></div>',
+  space:    '<div class="map-clip"><div class="map-bg map-space"></div></div><div class="diag-overlay"></div>',
+};
+const MAP_SPLIT_R3  = '<div class="map-clip"><div class="map-split"><div class="split-half"><div class="map-bg map-prison"></div></div><div class="split-half"><div class="map-bg map-brakkesh"></div></div></div></div><div class="diag-overlay"></div>';
+const MAP_TRIPLE_R7 = '<div class="map-clip"><div class="map-triple"><div class="split-third"><div class="map-bg map-prison"></div></div><div class="split-third"><div class="map-bg map-brakkesh"></div></div><div class="split-third"><div class="map-bg map-space"></div></div></div></div><div class="diag-overlay"></div>';
+
+// ──────────────────────────────────────────────
+// Session state
+// ──────────────────────────────────────────────
+let r3Pick = null;
+let r7Pick = null;
+let currentSel = '1';
+
+function lockR3Buttons(locked) {
+  document.querySelectorAll('.picker button.r3-btn').forEach(b => {
+    b.classList.toggle('locked', locked);
+  });
+  document.getElementById('resetR3Btn').disabled = !locked;
+}
+
+function resetR3() {
+  r3Pick = null;
+  lockR3Buttons(false);
+  setRound(currentSel, true);
+}
+
+// Re-renders only the dynamic map name text (called on language switch)
+function refreshDynamicNames() {
+  const mname3 = document.getElementById('mname3');
+  if      (r3Pick === '3.1') mname3.textContent = t('map_prison');
+  else if (r3Pick === '3.2') mname3.textContent = t('map_brakkesh');
+  else                        mname3.textContent = t('map_tbd');
+
+  const mname7 = document.getElementById('mname7');
+  if      (r7Pick === '7.1') mname7.textContent = t('map_prison');
+  else if (r7Pick === '7.2') mname7.textContent = t('map_brakkesh');
+  else if (r7Pick === '7.3') mname7.textContent = t('map_space');
+  else                        mname7.textContent = t('map_tbd');
+}
+
+// ──────────────────────────────────────────────
+// Core round setter
+// ──────────────────────────────────────────────
+function setRound(sel, skipR3Lock = false) {
+  const isR3Choice = sel === '3.1' || sel === '3.2';
+  const isR7Choice = sel === '7.1' || sel === '7.2' || sel === '7.3';
+
+  // Redirect to locked pick if R3 already chosen
+  if (isR3Choice && r3Pick !== null && !skipR3Lock) sel = r3Pick;
+
+  // Lock R3 on first sub-choice
+  if (isR3Choice && r3Pick === null && !skipR3Lock) {
+    r3Pick = sel;
+    lockR3Buttons(true);
+  }
+
+  if (isR7Choice) r7Pick = sel;
+
+  currentSel = sel;
+  const currentRound = Math.floor(parseFloat(sel));
+
+  // Active button
+  document.querySelectorAll('.picker button').forEach(b => {
+    b.classList.toggle('active', b.dataset.sel === sel);
+  });
+
+  // Card states
+  document.querySelectorAll('.card').forEach(c => {
+    const r = parseInt(c.dataset.r);
+    c.classList.remove('past', 'current', 'future');
+    if      (r < currentRound)  c.classList.add('past');
+    else if (r === currentRound) c.classList.add('current');
+    else                         c.classList.add('future');
+  });
+
+  // R3
+  const mname3   = document.getElementById('mname3');
+  const maparea3 = document.getElementById('maparea3');
+  if (r3Pick === '3.1') {
+    mname3.textContent  = t('map_prison');
+    maparea3.innerHTML  = MAP_SINGLE.prison;
+  } else if (r3Pick === '3.2') {
+    mname3.textContent  = t('map_brakkesh');
+    maparea3.innerHTML  = MAP_SINGLE.brakkesh;
+  } else {
+    mname3.textContent  = t('map_tbd');
+    maparea3.innerHTML  = MAP_SPLIT_R3;
+  }
+
+  // R7
+  const mname7   = document.getElementById('mname7');
+  const maparea7 = document.getElementById('maparea7');
+  if (r7Pick === '7.1') {
+    mname7.textContent = t('map_prison');
+    maparea7.innerHTML = MAP_SINGLE.prison;
+  } else if (r7Pick === '7.2') {
+    mname7.textContent = t('map_brakkesh');
+    maparea7.innerHTML = MAP_SINGLE.brakkesh;
+  } else if (r7Pick === '7.3') {
+    mname7.textContent = t('map_space');
+    maparea7.innerHTML = MAP_SINGLE.space;
+  } else {
+    mname7.textContent = t('map_tbd');
+    maparea7.innerHTML = MAP_TRIPLE_R7;
+  }
+}
+
+// ──────────────────────────────────────────────
+// Boot
+// ──────────────────────────────────────────────
+const langSelect = document.getElementById('langSelect');
+for (const code of Object.keys(LANGS)) {
+  const opt = document.createElement('option');
+  opt.value = code;
+  opt.textContent = LANGS[code].lang_name || code;
+  langSelect.appendChild(opt);
+}
+setLang('en');
+setRound('1');
+</script>
+</body>
+</html>
