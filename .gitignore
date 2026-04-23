@@ -1,3 +1,4 @@
-# Claude Code - local config only
+# Claude Code - local config, except plugin manifest (workspace standard)
 CLAUDE.md
-.claude/
+.claude/*
+!.claude/plugins.json
