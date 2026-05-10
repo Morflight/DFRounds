@@ -215,7 +215,7 @@ rule_6_body: Каждый оперативник может быть выбра�
     position: relative;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    padding: 24px 32px;
+    padding: 24px 24px;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     gap: 18px;
@@ -236,19 +236,30 @@ rule_6_body: Каждый оперативник может быть выбра�
   }
 
   .rule-icon {
-    height: 160px;
+    height: 90px;
     display: flex; align-items: center; justify-content: center;
-    gap: 18px;
+    gap: 12px;
   }
   .rule-icon img { height: 100%; width: auto; object-fit: contain; }
   .rule-icon svg { height: 100%; width: auto; }
   .rule-icon .stat {
     font-family: 'Oswald', sans-serif; font-weight: 700;
-    font-size: 120px; line-height: 1;
+    font-size: 72px; line-height: 1;
     color: var(--teal);
-    text-shadow: 0 0 32px rgba(0,229,160,0.4);
+    text-shadow: 0 0 24px rgba(0,229,160,0.35);
     letter-spacing: 1px;
   }
+
+  /* Box 4 — two bricks side by side, touching, pair centered */
+  .rule-icon.icon-bricks { height: 140px; gap: 0; }
+  .rule-icon.icon-bricks img + img { margin-left: -24px; }
+  .rule-icon.icon-bricks img {
+    filter: drop-shadow(0 0 12px rgba(0,229,160,0.3));
+  }
+
+  /* Box 5 — round strip; allow the bricks to render at their full size
+     without clipping the surrounding card */
+  .rule-icon.icon-strip { height: 120px; overflow: visible; }
 
   .rule-headline {
     font-family: 'Oswald', sans-serif;
@@ -264,7 +275,10 @@ rule_6_body: Каждый оперативник может быть выбра�
     max-width: 95%;
   }
 
-  /* Round mini-strip for box 5 */
+  /* Round mini-strip for box 5.
+     pip 60 + gap 10 × 7/6 = 480 physical width.
+     Brick (96) overflows pip ±18, air image (76) overflows ±8 → 516 visual.
+     Card content area at padding 24×2 is 536 → ~10 px breathing on each side. */
   .round-strip {
     display: flex; gap: 10px;
     align-items: center; justify-content: center;
@@ -285,17 +299,15 @@ rule_6_body: Каждый оперативник может быть выбра�
     box-shadow: 0 0 18px rgba(0,229,160,0.3);
   }
   .round-pip.air img {
-    width: 78px; height: 78px;
-    opacity: 1;
+    width: 76px; height: 76px;
     filter: drop-shadow(0 0 8px rgba(0,229,160,0.35));
-    position: relative; z-index: 1;
+    position: relative; z-index: 2;
   }
   .round-pip.brick {
     border-color: transparent; background: transparent;
   }
   .round-pip.brick img {
-    width: 100px; height: 100px;
-    opacity: 1;
+    width: 96px; height: 96px;
     filter: drop-shadow(0 0 10px rgba(0,229,160,0.3));
     position: relative; z-index: 1;
   }
@@ -403,8 +415,8 @@ rule_6_body: Каждый оперативник может быть выбра�
 
     <!-- Rule 4: Win condition -->
     <div class="rule-card">
-      <div class="rule-icon">
-        <span class="stat">2×</span>
+      <div class="rule-icon icon-bricks">
+        <img src="../images/mandel.png" alt="">
         <img src="../images/mandel.png" alt="">
       </div>
       <div class="rule-headline" data-i18n="rule_4_headline">First to 2 Bricks Wins</div>
@@ -413,7 +425,7 @@ rule_6_body: Каждый оперативник может быть выбра�
 
     <!-- Rule 5: Round modes -->
     <div class="rule-card">
-      <div class="rule-icon">
+      <div class="rule-icon icon-strip">
         <div class="round-strip">
           <div class="round-pip air"><img src="../images/airdrop.png" alt=""></div>
           <div class="round-pip brick"><img src="../images/mandel.png" alt=""></div>
