@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DF Rounds — Scenes</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Reset + design tokens */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --teal: #00e5a0;
+    --teal-bright: #00ffa8;
+    --dark-bg: #0b1610;
+    --card-bg: #111e16;
+    --card-border: #1a2e22;
+    --grey-text: #5a6e62;
+    --white: #eaf2ec;
+  }
+  body {
+    background: #080e0a;
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--white);
+    padding: 60px 80px; min-height: 100vh;
+  }
+  h1 {
+    font-family: 'Oswald', sans-serif; font-size: 42px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .subtitle { color: var(--grey-text); font-size: 16px; margin-bottom: 40px; letter-spacing: 1px; }
+  .scenes { display: grid; gap: 14px; max-width: 720px; }
+  .scene-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 8px; padding: 18px 22px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .scene-card:hover {
+    border-color: var(--teal);
+    box-shadow: 0 0 24px rgba(0,229,160,0.08);
+  }
+  .scene-card a {
+    font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 600;
+    color: var(--white); text-decoration: none; letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .scene-card a:hover { color: var(--teal); }
+  .scene-card p { font-size: 14px; color: var(--grey-text); margin-top: 6px; }
+  .obs {
+    margin-top: 10px; font-family: monospace; font-size: 12px;
+    color: rgba(0,229,160,0.6); word-break: break-all;
+  }
+  .note {
+    margin-top: 50px; padding: 16px 22px; max-width: 720px;
+    background: rgba(0,229,160,0.05); border-left: 3px solid var(--teal);
+    font-size: 13px; line-height: 1.6; color: rgba(234,242,236,0.7);
+  }
+  .note code {
+    background: rgba(0,0,0,0.4); padding: 1px 6px; border-radius: 3px;
+    color: var(--teal); font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Delta Force Casting Scenes</h1>
+<p class="subtitle">Tournament broadcast overlays for OBS</p>
+
+<div class="scenes">
+  <div class="scene-card">
+    <a href="scenes/rounds.html">Rounds Progression</a>
+    <p>7-round overlay with R3/R7 map-pick locking.</p>
+    <div class="obs" id="obs-rounds">OBS URL: loading…</div>
+  </div>
+  <div class="scene-card">
+    <a href="scenes/rules.html">Match Rules</a>
+    <p>6-box rules announcement scene with translatable text.</p>
+    <div class="obs" id="obs-rules">OBS URL: loading…</div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>How to use:</strong> double-click any scene to open it in your browser, or paste the OBS URL above into a Browser Source. Each scene HTML is fully self-contained — no external loads, no server, no CORS errors. Edit the <code>&lt;script type="text/yaml"&gt;</code> blocks in <code>scenes/*.html</code> to change translations; edit <code>&lt;script type="application/json" id="dfconfig"&gt;</code> to change tournament name or branding.
+</div>
+
+<script>
+  // Build the OBS http://absolute/ URL based on this page's location.
+  const here = window.location.href.replace(/\/index\.html$/, '/').replace(/[^/]+$/, '');
+  const absolutePath = window.location.pathname.replace(/\/index\.html$/, '/').replace(/[^/]+$/, '');
+  document.getElementById('obs-rounds').textContent =
+    'OBS URL: http://absolute' + absolutePath + 'scenes/rounds.html';
+  document.getElementById('obs-rules').textContent =
+    'OBS URL: http://absolute' + absolutePath + 'scenes/rules.html';
+</script>
+
+</body>
+</html>

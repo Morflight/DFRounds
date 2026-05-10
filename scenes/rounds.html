@@ -5,90 +5,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Delta Force Rounds</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script>
-// ──────────────────────────────────────────────
-// Language strings — edit these to update translations
-// Add a new block (e.g. it: { ... }) to register a new language
-// ──────────────────────────────────────────────
-const LANGS = {
-  en: {
-    lang_name:          "English",
-    title:              "Tournament Progression",
-    subtitle:           "Bi-weekly scrims.cc",
-    picker_round:       "Round",
-    round_label:        "Round",
-    settings_language:  "Language",
-    settings_reset_r3:  "Reset R3 pick",
-    hint_r3_before:     "3 = before pick (split preview)",
-    hint_r3_prison:     "3.1 = Tidal Prison",
-    hint_r3_brakkesh:   "3.2 = Brakkesh",
-    hint_r7_before:     "7 = before pick (triple preview)",
-    hint_r7_prison:     "7.1 = Tidal Prison",
-    hint_r7_brakkesh:   "7.2 = Brakkesh",
-    hint_r7_space:      "7.3 = Space City",
-    map_prison:         "Tidal Prison",
-    map_brakkesh:       "Brakkesh",
-    map_space:          "Space City",
-    map_dam:            "Zero Dam",
-    map_tbd:            "To be decided",
-    mode_airdrop:       "Airdrop",
-    mode_mandelbrick:   "Mandlebrick active",
-    footer_note:        "Before rounds 3 and 7, the team ranked 6th chooses the map",
-    footer_brand:       "Bi-weekly scrims.cc tournament",
-  },
-  fr: {
-    lang_name:          "Français",
-    title:              "Progression du Tournoi",
-    subtitle:           "Bi-hebdomadaire scrims.cc",
-    picker_round:       "Manche",
-    round_label:        "Manche",
-    settings_language:  "Langue",
-    settings_reset_r3:  "Réinitialiser le choix R3",
-    hint_r3_before:     "3 = avant le choix (aperçu partagé)",
-    hint_r3_prison:     "3.1 = Prison des marées",
-    hint_r3_brakkesh:   "3.2 = Brakkesh",
-    hint_r7_before:     "7 = avant le choix (triple aperçu)",
-    hint_r7_prison:     "7.1 = Prison des marées",
-    hint_r7_brakkesh:   "7.2 = Brakkesh",
-    hint_r7_space:      "7.3 = Cité Spatiale",
-    map_prison:         "Prison des marées",
-    map_brakkesh:       "Brakkesh",
-    map_space:          "Cité Spatiale",
-    map_dam:            "Barrage Zéro",
-    map_tbd:            "À déterminer",
-    mode_airdrop:       "Largage aérien",
-    mode_mandelbrick:   "Mandlebrick actif",
-    footer_note:        "Avant les manches 3 et 7, l'équipe classée 6e choisit la carte",
-    footer_brand:       "Tournoi bi-hebdomadaire scrims.cc",
-  },
-  ru: {
-    lang_name:          "Русский",
-    title:              "Прогресс турнира",
-    subtitle:           "Двухнедельный scrims.cc",
-    picker_round:       "Раунд",
-    round_label:        "Раунд",
-    settings_language:  "Язык",
-    settings_reset_r3:  "Сброс выбора R3",
-    hint_r3_before:     "3 = до выбора (предпросмотр)",
-    hint_r3_prison:     "3.1 = Приливная тюрьма",
-    hint_r3_brakkesh:   "3.2 = Брakkesh",
-    hint_r7_before:     "7 = до выбора (тройной предпросмотр)",
-    hint_r7_prison:     "7.1 = Приливная тюрьма",
-    hint_r7_brakkesh:   "7.2 = Брakkesh",
-    hint_r7_space:      "7.3 = Космический город",
-    map_prison:         "Приливная тюрьма",
-    map_brakkesh:       "Брakkesh",
-    map_space:          "Космический город",
-    map_dam:            "Нулевая плотина",
-    map_tbd:            "Не определено",
-    mode_airdrop:       "Авиадесант",
-    mode_mandelbrick:   "Mandlebrick активен",
-    footer_note:        "Перед раундами 3 и 7 команда на 6-м месте выбирает карту",
-    footer_brand:       "Двухнедельный турнир scrims.cc",
-  },
-};
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     Per-tournament config. Edit these values for each event.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script type="application/json" id="dfconfig">
+{
+  "defaultLanguage": "en",
+  "brand": "Delta Force EU",
+  "tournamentName": "Global League (EU) — Finals"
+}
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     Translations. Each yaml block below holds one language. Format: flat
+     key/value, hash sign for comments. Browsers don't execute non-JS script
+     types — the boot code reads textContent and parses.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script type="text/yaml" data-lang="en">
+lang_name: English
+title: Tournament Progression
+
+picker_round: Round
+round_label: Round
+
+settings_language: Language
+settings_reset_r3: Reset R3 pick
+settings_reset_r7: Reset R7 pick
+
+map_prison: Tide Prison
+map_brakkesh: Brakkesh
+map_space: Space City
+map_dam: Zero Dam
+map_tbd: To be decided
+
+mode_airdrop: Airdrop
+mode_mandelbrick: Mandlebrick active
+
+footer_note: Before rounds 3 and 7, the team ranked 6th chooses the map
+</script>
+
+<script type="text/yaml" data-lang="fr">
+lang_name: Français
+title: Progression du Tournoi
+
+picker_round: Manche
+round_label: Manche
+
+settings_language: Langue
+settings_reset_r3: Réinitialiser le choix R3
+settings_reset_r7: Réinitialiser le choix R7
+
+map_prison: Prison des marées
+map_brakkesh: Brakkesh
+map_space: Cité Spatiale
+map_dam: Barrage Zéro
+map_tbd: À déterminer
+
+mode_airdrop: Largage aérien
+mode_mandelbrick: Mandlebrick actif
+
+footer_note: Avant les manches 3 et 7, l'équipe classée 6e choisit la carte
+</script>
+
+<script type="text/yaml" data-lang="ru">
+lang_name: Русский
+title: Прогресс турнира
+
+picker_round: Раунд
+round_label: Раунд
+
+settings_language: Язык
+settings_reset_r3: Сброс выбора R3
+settings_reset_r7: Сброс выбора R7
+
+map_prison: Приливная тюрьма
+map_brakkesh: Брakkesh
+map_space: Космический город
+map_dam: Нулевая плотина
+map_tbd: Не определено
+
+mode_airdrop: Авиадесант
+mode_mandelbrick: Mandlebrick активен
+
+footer_note: Перед раундами 3 и 7 команда на 6-м месте выбирает карту
+</script>
+
 <style>
+  /* Reset + design tokens */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
     --teal: #00e5a0;
@@ -169,10 +173,11 @@ const LANGS = {
     border: 1px solid rgba(0,229,160,0.25);
     display: flex; flex-direction: column; gap: 8px; align-items: center;
   }
-  .picker-row { display: flex; gap: 5px; align-items: center; }
-  .picker-row span {
+  .picker-row { display: flex; gap: 5px; align-items: flex-start; }
+  .picker-row > span {
     font-size: 12px; color: var(--teal); font-weight: 700;
     text-transform: uppercase; letter-spacing: 1.5px; margin-right: 6px;
+    padding-top: 9px; white-space: nowrap;
   }
   .picker button {
     min-width: 38px; height: 32px; padding: 0 8px;
@@ -184,11 +189,21 @@ const LANGS = {
   .picker button:hover { border-color: var(--teal); background: #1a2e22; }
   .picker button.active { background: var(--teal); color: #0b1610; border-color: var(--teal); }
   .picker button.alt { border-color: #3a5040; font-size: 11px; }
-  /* Alt buttons hidden once R3 map is locked */
-  .picker button.alt.r3-btn.locked { display: none; }
-  .picker .hint {
-    font-size: 10px; color: var(--grey-text); text-align: center; line-height: 1.3;
+
+  /* R3/R7 grouped buttons: parent on top, sub-options [button + map name] stacked below */
+  .round-group { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+  .sub-option { display: flex; align-items: center; gap: 8px; }
+  .sub-label {
+    font-size: 11px; color: var(--grey-text);
+    font-weight: 600; letter-spacing: 0.5px;
+    text-transform: uppercase; white-space: nowrap;
   }
+
+  /* Greyed: parent before pick, or sub-buttons after pick. Parent stays clickable
+     (operator can still navigate to TBD preview); sub-buttons become non-interactive. */
+  .picker button.greyed { opacity: 0.35; }
+  .picker button.alt.greyed { cursor: default; pointer-events: none; }
+  .picker button.alt.greyed + .sub-label { opacity: 0.4; }
 
   /* ── Canvas ── */
   .canvas {
@@ -308,10 +323,10 @@ const LANGS = {
   .map-bg { width: 100%; height: 100%; position: relative; }
 
   /* ── Map colours ── */
-  .map-dam     { background: url('images/barrage.png') center center / cover no-repeat; }
-  .map-brakkesh{ background: url('images/brakkesh.webp') 70% center / cover no-repeat; }
-  .map-prison  { background: url('images/Prison.webp') center center / cover no-repeat; }
-  .map-space   { background: url('images/cite.png') center 60% / cover no-repeat; }
+  .map-dam     { background: url('../images/barrage.png') center center / cover no-repeat; }
+  .map-brakkesh{ background: url('../images/brakkesh.webp') 70% center / cover no-repeat; }
+  .map-prison  { background: url('../images/Prison.webp') center center / cover no-repeat; }
+  .map-space   { background: url('../images/cite.png') center 60% / cover no-repeat; }
   .map-tbd     { background: linear-gradient(150deg, #1a2420, #0e1a14 50%, #1a2a20); }
   .map-tbd::after {
     content: '?'; position: absolute;
@@ -390,6 +405,8 @@ const LANGS = {
     <div class="settings-section">
       <button class="reset-btn" id="resetR3Btn" onclick="resetR3()" disabled
         data-i18n="settings_reset_r3">Reset R3 pick</button>
+      <button class="reset-btn" id="resetR7Btn" onclick="resetR7()" disabled
+        data-i18n="settings_reset_r7">Reset R7 pick</button>
     </div>
   </div>
 
@@ -399,18 +416,36 @@ const LANGS = {
     <span id="lbl-round" data-i18n="picker_round">Round</span>
     <button data-sel="1"   onclick="setRound('1')" class="active">1</button>
     <button data-sel="2"   onclick="setRound('2')">2</button>
-    <button data-sel="3"   onclick="setRound('3')">3</button>
-    <button data-sel="3.1" onclick="setRound('3.1')" class="alt r3-btn">3.1</button>
-    <button data-sel="3.2" onclick="setRound('3.2')" class="alt r3-btn">3.2</button>
+    <div class="round-group">
+      <button data-sel="3"   onclick="setRound('3')">3</button>
+      <div class="sub-option">
+        <button data-sel="3.1" onclick="setRound('3.1')" class="alt r3-btn">3.1</button>
+        <span class="sub-label" data-i18n="map_prison">Tidal Prison</span>
+      </div>
+      <div class="sub-option">
+        <button data-sel="3.2" onclick="setRound('3.2')" class="alt r3-btn">3.2</button>
+        <span class="sub-label" data-i18n="map_brakkesh">Brakkesh</span>
+      </div>
+    </div>
     <button data-sel="4"   onclick="setRound('4')">4</button>
     <button data-sel="5"   onclick="setRound('5')">5</button>
     <button data-sel="6"   onclick="setRound('6')">6</button>
-    <button data-sel="7"   onclick="setRound('7')">7</button>
-    <button data-sel="7.1" onclick="setRound('7.1')" class="alt">7.1</button>
-    <button data-sel="7.2" onclick="setRound('7.2')" class="alt">7.2</button>
-    <button data-sel="7.3" onclick="setRound('7.3')" class="alt">7.3</button>
+    <div class="round-group">
+      <button data-sel="7"   onclick="setRound('7')">7</button>
+      <div class="sub-option">
+        <button data-sel="7.1" onclick="setRound('7.1')" class="alt r7-btn">7.1</button>
+        <span class="sub-label" data-i18n="map_prison">Tidal Prison</span>
+      </div>
+      <div class="sub-option">
+        <button data-sel="7.2" onclick="setRound('7.2')" class="alt r7-btn">7.2</button>
+        <span class="sub-label" data-i18n="map_brakkesh">Brakkesh</span>
+      </div>
+      <div class="sub-option">
+        <button data-sel="7.3" onclick="setRound('7.3')" class="alt r7-btn">7.3</button>
+        <span class="sub-label" data-i18n="map_space">Space City</span>
+      </div>
+    </div>
   </div>
-    <div class="hint" id="pickerHint"></div>
   </div><!-- /.picker -->
 
 </div><!-- /.top-controls -->
@@ -437,8 +472,8 @@ const LANGS = {
   </div>
 
   <div class="top-logos">
-    <div class="logo-box">Scrims.cc</div>
-    <div class="logo-box" style="background:rgba(0,229,160,0.1)" id="subtitle-box" data-i18n="subtitle">Bi-weekly</div>
+    <div class="logo-box" id="brand-box">Scrims.cc</div>
+    <div class="logo-box" style="background:rgba(0,229,160,0.1)" id="tournament-name-box">Global League (EU) — Finals</div>
   </div>
 
   <div class="rounds" id="rounds">
@@ -455,7 +490,7 @@ const LANGS = {
         <div class="diag-overlay"></div>
       </div>
       <div class="mode">
-        <img src="images/airdrop.png" style="height:50px;width:auto;">
+        <img src="../images/airdrop.png" style="height:50px;width:auto;">
         <div class="mode-name" data-i18n="mode_airdrop">Airdrop</div>
       </div>
     </div>
@@ -472,7 +507,7 @@ const LANGS = {
         <div class="diag-overlay"></div>
       </div>
       <div class="mode">
-        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <img src="../images/mandel.png" style="height:50px;width:auto;">
         <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
       </div>
     </div>
@@ -494,7 +529,7 @@ const LANGS = {
         <div class="diag-overlay"></div>
       </div>
       <div class="mode">
-        <img src="images/airdrop.png" style="height:50px;width:auto;">
+        <img src="../images/airdrop.png" style="height:50px;width:auto;">
         <div class="mode-name" data-i18n="mode_airdrop">Airdrop</div>
       </div>
     </div>
@@ -511,7 +546,7 @@ const LANGS = {
         <div class="diag-overlay"></div>
       </div>
       <div class="mode">
-        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <img src="../images/mandel.png" style="height:50px;width:auto;">
         <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
       </div>
     </div>
@@ -528,7 +563,7 @@ const LANGS = {
         <div class="diag-overlay"></div>
       </div>
       <div class="mode">
-        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <img src="../images/mandel.png" style="height:50px;width:auto;">
         <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
       </div>
     </div>
@@ -545,7 +580,7 @@ const LANGS = {
         <div class="diag-overlay"></div>
       </div>
       <div class="mode">
-        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <img src="../images/mandel.png" style="height:50px;width:auto;">
         <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
       </div>
     </div>
@@ -568,7 +603,7 @@ const LANGS = {
         <div class="diag-overlay"></div>
       </div>
       <div class="mode">
-        <img src="images/mandel.png" style="height:50px;width:auto;">
+        <img src="../images/mandel.png" style="height:50px;width:auto;">
         <div class="mode-name" data-i18n="mode_mandelbrick">Mandlebrick active</div>
       </div>
     </div>
@@ -578,8 +613,8 @@ const LANGS = {
   <div class="footer-note" id="footer-note" data-i18n="footer_note">
     Before rounds 3 and 7, the team ranked 6th chooses the map
   </div>
-  <div class="footer-brand" id="footer-brand" data-i18n="footer_brand">
-    Bi-weekly scrims.cc tournament
+  <div class="footer-brand" id="footer-brand">
+    Global League (EU) — Finals
   </div>
 
 </div>
@@ -587,29 +622,74 @@ const LANGS = {
 
 <script>
 // ──────────────────────────────────────────────
-// i18n
+// i18n + config — everything inline so the page works offline (file://) with
+// no external loads, no fetch, no CORS errors. Translations come from the
+// <script type="text/yaml"> blocks in <head>; config from #dfconfig.
 // ──────────────────────────────────────────────
+
+// Tiny YAML parser: flat `key: value`, # comments, optional double/single
+// quoted values. No nesting/lists/block scalars — translations don't need them.
+function parseYaml(text) {
+  const out = {};
+  for (const rawLine of text.split('\n')) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+    const m = line.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*:\s*(.*)$/);
+    if (!m) continue;
+    let value = m[2].trim();
+    if (value.startsWith('"') && value.endsWith('"') && value.length >= 2) {
+      value = value.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+    } else if (value.startsWith("'") && value.endsWith("'") && value.length >= 2) {
+      value = value.slice(1, -1);
+    }
+    out[m[1]] = value;
+  }
+  return out;
+}
+
+const LANGS = {};
 let currentLang = 'en';
 
+document.querySelectorAll('script[type="text/yaml"][data-lang]').forEach(el => {
+  LANGS[el.dataset.lang] = parseYaml(el.textContent);
+});
+
+function loadConfig() {
+  const el = document.getElementById('dfconfig');
+  if (!el) return {};
+  try { return JSON.parse(el.textContent); }
+  catch (e) { console.warn('config parse failed', e); return {}; }
+}
+
 function t(key) {
-  return (LANGS[currentLang]?.[key]) || LANGS.en[key] || key;
+  return (LANGS[currentLang]?.[key]) || (LANGS.en?.[key]) || key;
+}
+
+function setI18nText(el, key) {
+  const v = t(key);
+  if (v !== key) { el.textContent = v; return true; }
+  return false;
+}
+
+function applyTranslations() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    setI18nText(el, el.getAttribute('data-i18n'));
+  });
+}
+
+function populateLangPicker(selectEl) {
+  for (const code of Object.keys(LANGS)) {
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = LANGS[code].lang_name || code;
+    selectEl.appendChild(opt);
+  }
 }
 
 function setLang(lang) {
   currentLang = lang;
-  document.documentElement.lang = lang;
-
-  // Update all static data-i18n elements
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    el.textContent = t(el.getAttribute('data-i18n'));
-  });
-
-  // Update picker hint
-  document.getElementById('pickerHint').innerHTML =
-    `${t('hint_r3_before')} · ${t('hint_r3_prison')} · ${t('hint_r3_brakkesh')}<br>` +
-    `${t('hint_r7_before')} · ${t('hint_r7_prison')} · ${t('hint_r7_brakkesh')} · ${t('hint_r7_space')}`;
-
-  // Re-render dynamic round names with new language
+  applyTranslations();
   refreshDynamicNames();
 }
 
@@ -631,51 +711,67 @@ let r3Pick = null;
 let r7Pick = null;
 let currentSel = '1';
 
-function lockR3Buttons(locked) {
-  document.querySelectorAll('.picker button.r3-btn').forEach(b => {
-    b.classList.toggle('locked', locked);
-  });
-  document.getElementById('resetR3Btn').disabled = !locked;
+// Visual state of the picker. Parents (3, 7) grey when no pick. Sub-buttons grey when pick locked.
+function updatePickerStates() {
+  const r3Locked = r3Pick !== null;
+  const r7Locked = r7Pick !== null;
+
+  document.querySelector('.picker button[data-sel="3"]').classList.toggle('greyed', !r3Locked);
+  document.querySelector('.picker button[data-sel="7"]').classList.toggle('greyed', !r7Locked);
+
+  document.querySelectorAll('.picker button.r3-btn').forEach(b => b.classList.toggle('greyed', r3Locked));
+  document.querySelectorAll('.picker button.r7-btn').forEach(b => b.classList.toggle('greyed', r7Locked));
+
+  document.getElementById('resetR3Btn').disabled = !r3Locked;
+  document.getElementById('resetR7Btn').disabled = !r7Locked;
 }
 
 function resetR3() {
   r3Pick = null;
   r7Pick = null;
-  lockR3Buttons(false);
   setRound(currentSel, true);
 }
 
-// Re-renders only the dynamic map name text (called on language switch)
+function resetR7() {
+  r7Pick = null;
+  setRound(currentSel, true);
+}
+
+// Re-renders only the dynamic map name text (called on language switch).
+// Uses setI18nText so that when no translations are loaded the HTML default
+// or previously-set text survives instead of being replaced by raw keys.
 function refreshDynamicNames() {
   const mname3 = document.getElementById('mname3');
-  if      (r3Pick === '3.1') mname3.textContent = t('map_prison');
-  else if (r3Pick === '3.2') mname3.textContent = t('map_brakkesh');
-  else                        mname3.textContent = t('map_tbd');
+  if      (r3Pick === '3.1') setI18nText(mname3, 'map_prison');
+  else if (r3Pick === '3.2') setI18nText(mname3, 'map_brakkesh');
+  else                        setI18nText(mname3, 'map_tbd');
 
   const mname7 = document.getElementById('mname7');
-  if      (r7Pick === '7.1') mname7.textContent = t('map_prison');
-  else if (r7Pick === '7.2') mname7.textContent = t('map_brakkesh');
-  else if (r7Pick === '7.3') mname7.textContent = t('map_space');
-  else                        mname7.textContent = t('map_tbd');
+  if      (r7Pick === '7.1') setI18nText(mname7, 'map_prison');
+  else if (r7Pick === '7.2') setI18nText(mname7, 'map_brakkesh');
+  else if (r7Pick === '7.3') setI18nText(mname7, 'map_space');
+  else                        setI18nText(mname7, 'map_tbd');
 }
 
 // ──────────────────────────────────────────────
 // Core round setter
 // ──────────────────────────────────────────────
-function setRound(sel, skipR3Lock = false) {
+function setRound(sel, fromReset = false) {
   const isR3Choice = sel === '3.1' || sel === '3.2';
   const isR7Choice = sel === '7.1' || sel === '7.2' || sel === '7.3';
 
-  // Redirect to locked pick if R3 already chosen
-  if (isR3Choice && r3Pick !== null && !skipR3Lock) sel = r3Pick;
-
-  // Lock R3 on first sub-choice
-  if (isR3Choice && r3Pick === null && !skipR3Lock) {
-    r3Pick = sel;
-    lockR3Buttons(true);
+  if (!fromReset) {
+    // Greyed sub-button click after pick is locked: no-op.
+    if (isR3Choice && r3Pick !== null) return;
+    if (isR7Choice && r7Pick !== null) return;
+    // First-time pick: store it and navigate to the parent round button.
+    if (isR3Choice) { r3Pick = sel; sel = '3'; }
+    if (isR7Choice) { r7Pick = sel; sel = '7'; }
+  } else {
+    // Reset path: if currentSel happens to be a sub-pick value, normalize to parent.
+    if (isR3Choice) sel = '3';
+    if (isR7Choice) sel = '7';
   }
-
-  if (isR7Choice) r7Pick = sel;
 
   currentSel = sel;
   const currentRound = Math.floor(parseFloat(sel));
@@ -698,13 +794,13 @@ function setRound(sel, skipR3Lock = false) {
   const mname3   = document.getElementById('mname3');
   const maparea3 = document.getElementById('maparea3');
   if (r3Pick === '3.1') {
-    mname3.textContent  = t('map_prison');
+    setI18nText(mname3, 'map_prison');
     maparea3.innerHTML  = MAP_SINGLE.prison;
   } else if (r3Pick === '3.2') {
-    mname3.textContent  = t('map_brakkesh');
+    setI18nText(mname3, 'map_brakkesh');
     maparea3.innerHTML  = MAP_SINGLE.brakkesh;
   } else {
-    mname3.textContent  = t('map_tbd');
+    setI18nText(mname3, 'map_tbd');
     maparea3.innerHTML  = MAP_SPLIT_R3;
   }
 
@@ -712,31 +808,41 @@ function setRound(sel, skipR3Lock = false) {
   const mname7   = document.getElementById('mname7');
   const maparea7 = document.getElementById('maparea7');
   if (r7Pick === '7.1') {
-    mname7.textContent = t('map_prison');
+    setI18nText(mname7, 'map_prison');
     maparea7.innerHTML = MAP_SINGLE.prison;
   } else if (r7Pick === '7.2') {
-    mname7.textContent = t('map_brakkesh');
+    setI18nText(mname7, 'map_brakkesh');
     maparea7.innerHTML = MAP_SINGLE.brakkesh;
   } else if (r7Pick === '7.3') {
-    mname7.textContent = t('map_space');
+    setI18nText(mname7, 'map_space');
     maparea7.innerHTML = MAP_SINGLE.space;
   } else {
-    mname7.textContent = t('map_tbd');
+    setI18nText(mname7, 'map_tbd');
     maparea7.innerHTML = MAP_TRIPLE_R7;
   }
+
+  updatePickerStates();
 }
 
 // ──────────────────────────────────────────────
 // Boot
 // ──────────────────────────────────────────────
-const langSelect = document.getElementById('langSelect');
-for (const code of Object.keys(LANGS)) {
-  const opt = document.createElement('option');
-  opt.value = code;
-  opt.textContent = LANGS[code].lang_name || code;
-  langSelect.appendChild(opt);
+const config = loadConfig();
+
+if (config.brand) {
+  document.getElementById('brand-box').textContent = config.brand;
 }
-setLang('en');
+if (config.tournamentName) {
+  document.getElementById('tournament-name-box').textContent = config.tournamentName;
+  document.getElementById('footer-brand').textContent = config.tournamentName;
+}
+
+const langSelect = document.getElementById('langSelect');
+populateLangPicker(langSelect);
+
+const initialLang = (config.defaultLanguage && LANGS[config.defaultLanguage]) ? config.defaultLanguage : 'en';
+langSelect.value = initialLang;
+setLang(initialLang);
 setRound('1');
 </script>
 </body>

@@ -1,69 +1,116 @@
-# Delta Force Rounds — Tournament Overlay
+# Delta Force Rounds — Tournament Casting Scenes
 
-A fullscreen broadcast overlay for displaying tournament round progression. Designed for 1920×1080 capture in OBS or any similar tool.
+A collection of HTML pages for Delta Force tournament broadcasts. Each scene is a single self-contained 1920×1080 HTML file — no external scripts, no fetches, no server. Open directly via `file://`, drop into OBS, or serve over HTTP — all three work, with zero CORS errors.
 
 ![Preview](images/preview.png?v=2)
 
 ---
 
-## Features
+## Scenes
 
-### Round Progression
-The overlay displays all 7 rounds as cards side by side. Each card shows the map name, a map thumbnail, and the game mode icon. Cards are automatically styled as **past** (greyed out), **current** (highlighted in teal), or **upcoming** based on the selected round.
+| Scene | File | Purpose |
+| --- | --- | --- |
+| Rounds Progression | `scenes/rounds.html` | 7-round overlay with R3/R7 map-pick locking |
+| Match Rules | `scenes/rules.html` | 6-box rules announcement |
 
-### Round Picker
-A control bar above the canvas lets the operator switch the active round at any time. Rounds 3 and 7 have sub-options (e.g. `3.1`, `3.2`) to reveal the chosen map once it has been decided.
+Open `index.html` for a launcher with copy-pasteable OBS URLs.
 
-### Round 3 Map Lock
-When the operator selects a map for Round 3 (either `3.1` or `3.2`), that choice is **locked for the rest of the session**. Navigating away to Round 4, 5, or 6 and coming back will always show the same map — it will not revert to the split preview. A **Reset R3 pick** button in the settings panel clears the lock if needed.
+---
 
-### Multi-language Support
-The overlay supports multiple languages. The language can be switched instantly at any time using the dropdown in the settings panel. Currently available languages are **English**, **French**, and **Russian**.
+## Project Layout
 
-### Settings Panel
-Located to the left of the round picker. Always visible to the operator. Contains the language selector and the Round 3 reset button. This area is not intended to appear on stream — position your OBS crop accordingly.
+```
+index.html            — scene launcher (self-contained)
+scenes/
+  rounds.html         — rounds progression overlay (self-contained)
+  rules.html          — match rules announcement (self-contained)
+images/               — map images and mode icons
+Makefile              — smoke (HTML parse) + preview (local server)
+```
+
+Each scene file embeds: design tokens (CSS), the i18n + parsing logic (JS), per-tournament config (JSON), and translations (YAML, one block per language). Browsers don't execute non-JS `<script type="...">` blocks — the boot code reads their `textContent` and parses.
+
+---
+
+## Opening a Scene
+
+1. **Double-click** the `.html` file. Works in Chrome, Firefox, Brave, etc. Nothing external is loaded except Google Fonts; `file://` paths just work.
+2. **OBS** Browser Source: set the URL to `file:///<full-path>/scenes/rounds.html` (or use `http://absolute/<path>/...` if your OBS install rejects raw `file://`). 1920×1080. Crop the settings/picker bar at the top.
+3. **`make preview`** → `http://localhost:8000/`. Useful when you want devtools without caching surprises.
+
+`index.html` shows the OBS URL for each scene; copy from there.
+
+---
+
+## Editing Per-Tournament Settings
+
+Each scene HTML has a `<script type="application/json" id="dfconfig">` block near the top:
+
+```json
+{
+  "defaultLanguage": "en",
+  "brand": "Scrims.cc",
+  "tournamentName": "Global League (EU) — Finals"
+}
+```
+
+| Key | Effect |
+| --- | --- |
+| `defaultLanguage` | Initial language (`en`, `fr`, `ru`, …). Falls back to `en` if invalid. |
+| `brand` | Top-left logo box. |
+| `tournamentName` | Top-right badge + bottom-right footer. |
+
+Edit it in each scene file you ship. (For multi-event work, replace the JSON block with the same content across `scenes/*.html`.)
 
 ---
 
 ## Editing Translations
 
-All translated strings live in the `LANGS` object at the top of `delta_force_rounds.html` (first `<script>` block in `<head>`). The language picker is built dynamically from `LANGS` at page load.
+Each scene HTML has one `<script type="text/yaml" data-lang="…">` block per language. The body is plain YAML:
 
-### How to update a translation
+```yaml
+lang_name: English
+title: Tournament Progression
+picker_round: Round
+# …
+```
 
-1. Open `delta_force_rounds.html` in a text editor.
-2. Find the `LANGS` object at the top — locate the block for your language (e.g. `fr: { ... }`).
-3. Edit the values. Do not rename keys.
-4. Save and refresh.
+YAML format: flat `key: value` lines, `#` for comments. Use double quotes if a value contains a colon, `#`, or starts with a special character (`[`, `{`, `&`, `*`, `!`, `|`, `>`, `'`, `"`, `%`, `@`, `` ` ``). Otherwise just type it.
+
+`lang_name` is the dropdown label. Missing keys fall back to `en` (the `en` block in the same file).
 
 ### Adding a new language
 
-1. Add a new block inside `LANGS` (e.g. `it: { lang_name: "Italiano", title: "...", ... }`).
-2. The `lang_name` key is used as the display label in the dropdown. If omitted, the language code is shown.
-3. Any key left blank will fall back to English automatically.
-4. Save and refresh — the dropdown updates automatically.
+1. Inside each `scenes/<name>.html`, copy an existing `<script type="text/yaml" data-lang="…">` block.
+2. Change `data-lang="X"` to your code (e.g. `it`).
+3. Translate the values.
+4. Reload — the dropdown updates automatically.
+
+(If you add a new scene, do the same in that scene's HTML.)
+
+### YAML parser scope
+
+Inline `parseYaml()` in each scene handles flat `key: value`, `#` comments, and quoted strings. It does **not** support nesting, lists, multi-line block scalars (`|`/`>`), anchors, or merge keys — translations don't need any of that.
+
+### Cross-scene shared keys
+
+A few keys (e.g. `settings_language`, `lang_name`) are duplicated across `rounds.html` and `rules.html`. If you change the wording, update both. Most keys are scene-specific.
 
 ---
 
-## File Structure
+## Smoke Test
 
 ```
-delta_force_rounds.html        — Main overlay page (includes all translations)
-images/
-  barrage.png                  — Map image: Zero Dam
-  brakkesh.webp                — Map image: Brakkesh
-  Prison.webp                  — Map image: Tidal Prison
-  cite.png                     — Map image: Space City
-  airdrop.png                  — Game mode icon: Airdrop
-  mandel.png                   — Game mode icon: Mandlebrick
+make smoke
 ```
 
-The HTML file references images by relative path.
+Parses every HTML file. The inline `<script type="text/yaml">` and `<script type="application/json">` blocks ride along inside the HTML, so HTML-parse coverage is enough.
 
 ---
 
-## OBS Setup
+## Adding a New Scene
 
-1. Add a **Browser Source** or use a **Window Capture** on the browser window.
-2. Set the resolution to **1920×1080**.
-3. Crop out the settings/picker bar at the top — only the canvas below it should be visible on stream.
+1. Copy `scenes/rounds.html` (or `rules.html`) to `scenes/<name>.html` as a starting template.
+2. Edit the `<script type="application/json" id="dfconfig">` block, the `<script type="text/yaml" data-lang="…">` blocks, and the inline `<style>` + `<script>` for the scene's logic.
+3. Reference images via `../images/<file>`.
+4. Add the scene to the table above and to the launcher in `index.html`.
